@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 def highest_abv_by_group(df, group_type):
     """ This function calculates the max beer_abv given a dataframe with a column named 'beer_abv'
@@ -71,6 +72,24 @@ def get_top_n_beers(df, num_beers, weights=None):
 
     # ----- Return top n results -----
     return df.head(num_beers)
+
+def generate_recommendation(user_id, model, beer_metadata, thresh=4):
+    
+    """
+    Generates a beer recommendation for a user based on a rating threshold. Only
+    beers with a predicted rating at or above the threshold will be recommended
+
+    based on code from following article: https://towardsdatascience.com/how-you-can-build-simple-recommender-systems-with-surprise-b0d32a8e4802
+    """
+    
+    beer_names = list(beer_metadata.keys())
+    random.shuffle(beer_names)
+    
+    for beer_name in beer_names:
+        beer_id = beer_metadata[beer_name]
+        rating = model.predict(uid=user_id, iid=beer_id)
+        if rating.est >= thresh:
+            return beer_name
 
 
 
